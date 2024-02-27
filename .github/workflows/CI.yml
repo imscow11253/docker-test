@@ -30,12 +30,30 @@ jobs:
 
     # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+    # Gradle을 설치 및 설정하는 단계
+    # gradle/actions/setup-gradle 액션을 사용
+    # Github Actions runner에 Gradle 빌드 도구를 설치 & 설정한다.여기선 v3.1.0 Gradle 을 사용한다. 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
+    # Gradle 빌드에 필요한 데이터를 캐싱하여 빌드 속도를 향상시키는 설정
+    # actions/cache 액션을 사용
+    # Gradle 캐시에 의존성, 래퍼 등을 빌드할 때 저장해두었다가 나중에 재빌드할 때 재사용해서 속도를 향상
+    - name: Gradle Caching
+      uses: actions/cache@v3
+      with:
+        path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+            ${{ runner.os }}-gradle-
+
+    # gradle 파일에 접근할 권한을 부여
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
 
+    # test를 제외한 build 작업 수행
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
 
