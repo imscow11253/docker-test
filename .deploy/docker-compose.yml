@@ -3,7 +3,7 @@ version: '3'
 services:
 
   web:
-    container_name: docker-test
+    container_name: kobaco
     image: ${DOCKER_USERNAME}/${DOCKER_REPOSITORY}
     expose:
       - "8080"
